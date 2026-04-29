@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/alip-jmbd/alipp/main/icons-full.jpg" alt="NefuSoft Banner" width="100%" style="border-radius: 15px; margin-bottom: 20px;"/>
+  <img src="https://github.com/alip-jmbd/alipp/blob/main/kaguya.png" alt="Kaguya" width="100%" style="border-radius: 15px; margin-bottom: 20px;"/>
   <img src="https://raw.githubusercontent.com/alip-jmbd/alipp/main/icon-rbg.png" alt="NefuSoft Logo" width="150" />
 
   # NefuSoft Anime
