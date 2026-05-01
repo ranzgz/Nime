@@ -78,5 +78,6 @@ const Chat = ({ isOpen, onClose }) => {
       </div>
     </div>
   );
+};
 
 export default Chat;
