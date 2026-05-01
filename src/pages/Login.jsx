@@ -31,7 +31,7 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center bg-[#0a0a0c] text-white p-4">
       <div className="bg-[#16161a] border border-white/5 p-8 rounded-3xl w-full max-w-sm shadow-2xl flex flex-col items-center">
         <img src="https://raw.githubusercontent.com/alip-jmbd/alipp/main/icon-rbg.png" alt="Logo" className="w-16 h-16 mb-6" />
-        <h2 className="text-2xl font-black mb-6">{isRegister ? 'Daftar Akun' : 'Masuk ke NefuSoft'}</h2>
+        <h2 className="text-2xl font-black mb-6">{isRegister ? 'Daftar Akun' : 'Masuk ke ZaruSoft'}</h2>
         
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
           <input type="email" placeholder="Email" className="bg-black p-3 rounded-xl outline-none border border-white/5 focus:border-[#F6CF80]" onChange={(e) => setEmail(e.target.value)} />
