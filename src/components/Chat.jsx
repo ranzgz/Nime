@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
-import Filter from 'bad-words';
+import * as BadWords from 'bad-words';
 import { useAuth } from '../context/AuthContext';
 
-const filter = new Filter();
+const filter = new BadWords.Filter();
 
 const Chat = ({ isOpen, onClose }) => {
   const { user } = useAuth();
