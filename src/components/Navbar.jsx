@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [liveResults, setLiveResults] = useState([]);
@@ -70,15 +70,29 @@ const Navbar = () => {
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
             </div>
             
-            <div onClick={() => user ? signOut() : navigate('/login')} className="w-9 h-9 bg-white/5 rounded-full flex items-center justify-center text-white cursor-pointer border border-white/10 hover:bg-[#F6CF80] hover:text-black hover:border-[#F6CF80] transition-colors shrink-0">
-              {user ? (
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-              ) : (
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-              )}
+            <div onClick={() => user ? navigate('/profile') : navigate('/login')} className="w-9 h-9 bg-white/5 rounded-full flex items-center justify-center text-white cursor-pointer border border-white/10 hover:bg-[#F6CF80] hover:text-black hover:border-[#F6CF80] transition-colors shrink-0">
+               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
             </div>
           </div>
-          {/* ... Search Overlay Code ... */}
+          
+          <div className={`absolute inset-0 bg-[#16161a] z-20 flex items-center px-4 transition-all duration-300 ease-out ${isSearchOpen ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8 pointer-events-none'}`}>
+            <form onSubmit={handleSearchSubmit} className="flex-1 flex items-center gap-3">
+              <button type="submit" className="text-[#F6CF80] shrink-0 p-2">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              </button>
+              <input 
+                ref={searchInputRef}
+                type="text" 
+                className="flex-1 bg-transparent text-white text-sm outline-none font-bold placeholder-white/30"
+                placeholder="Cari anime..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <button type="button" onClick={() => setIsSearchOpen(false)} className="text-white/40 hover:text-white p-2 shrink-0 transition-colors">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+              </button>
+            </form>
+          </div>
         </div>
       </nav>
 
@@ -101,21 +115,6 @@ const Navbar = () => {
           );
         })}
       </div>
-
-      {showLoginPopup && (
-        <div className="fixed inset-0 z-[999] bg-[#0a0a0c]/80 backdrop-blur-sm flex items-center justify-center p-4 animate-[fadeIn_0.2s_ease-out]">
-          <div className="bg-[#16161a] border border-white/10 rounded-3xl p-8 max-w-sm w-full flex flex-col items-center relative shadow-2xl">
-            <button onClick={() => setShowLoginPopup(false)} className="absolute top-5 right-5 text-white/30 hover:text-[#F6CF80] transition-colors">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-            </button>
-            <h3 className="text-white font-black text-2xl mb-6">Selamat Datang!</h3>
-            <div className="flex flex-col gap-3 w-full">
-              <button onClick={() => { navigate('/login?mode=login'); setShowLoginPopup(false); }} className="w-full bg-[#F6CF80] text-black font-black p-3 rounded-xl hover:bg-white transition">Masuk</button>
-              <button onClick={() => { navigate('/login?mode=register'); setShowLoginPopup(false); }} className="w-full bg-white/5 border border-white/10 text-white font-bold p-3 rounded-xl hover:bg-white/10 transition">Daftar</button>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 };
