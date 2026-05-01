@@ -12,18 +12,28 @@ const Login = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user) navigate('/home');
-  }, [user, navigate]);
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session) {
+        navigate('/home', { replace: true });
+      }
+    });
+    return () => authListener.subscription.unsubscribe();
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isRegister) {
-      const { error } = await supabase.auth.signUp({ email, password });
-      if (error) alert(error.message);
-      else alert('Cek email untuk konfirmasi!');
-    } else {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) alert(error.message);
+    try {
+      if (isRegister) {
+        const { error } = await supabase.auth.signUp({ email, password });
+        if (error) throw error;
+        alert('Cek email untuk konfirmasi!');
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        // Redirect ditangani oleh onAuthStateChange
+      }
+    } catch (error) {
+      alert(error.message);
     }
   };
 
