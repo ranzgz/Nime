@@ -911,6 +911,8 @@ const Watch = () => {
               </div>
             )}
 
+            <Comments animeSlug={id} episodeId={currentEpId} />
+
             {servers.length > 0 && (
               <div className="mb-10 bg-[#16161a] rounded-sm border border-white/5 p-4 md:p-6 shadow-xl">
                 <div className="flex flex-col mb-4">

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import * as BadWords from 'bad-words';
 import { useAuth } from '../context/AuthContext';
@@ -11,9 +11,19 @@ const Chat = ({ isOpen, onClose }) => {
   const [input, setInput] = useState('');
   const chatContainerRef = React.useRef(null);
 
+  // Generate a consistent random ID per user based on their UID for the chat session
+  const chatUserId = useMemo(() => {
+    if (!user) return 'Anonim';
+    let hash = 0;
+    for (let i = 0; i < user.id.length; i++) {
+        hash = user.id.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return `User-${Math.abs(hash % 1000000)}`;
+  }, [user]);
+
   useEffect(() => {
     const fetchMessages = async () => {
-      const { data } = await supabase.from('messages').select('*, profiles(username)').order('created_at', { ascending: true }).limit(50);
+      const { data } = await supabase.from('messages').select('*').order('created_at', { ascending: true }).limit(50);
       setMessages(data || []);
     };
     fetchMessages();
@@ -36,13 +46,17 @@ const Chat = ({ isOpen, onClose }) => {
   const sendMessage = async () => {
     if (!input.trim() || !user) return;
     const cleanContent = filter.clean(input);
-    await supabase.from('messages').insert({ content: cleanContent, user_id: user.id });
+    await supabase.from('messages').insert({ 
+      content: cleanContent, 
+      user_id: user.id,
+      sender_id: chatUserId // Added field for masking
+    });
     setInput('');
   };
 
   return (
-    <div className="fixed top-0 left-0 h-full w-80 max-w-[90vw] bg-[#0a0a0c] z-[200] shadow-2xl border-r border-white/5 transition-transform duration-300 ease-out translate-x-0">
-      <div className="bg-[#0a0a0c] p-4 h-full flex flex-col border-r border-white/5">
+    <div className={`fixed bottom-24 right-4 w-80 max-w-[90vw] h-96 bg-[#0a0a0c] z-[1000] shadow-2xl border border-white/5 rounded-xl transition-transform duration-300 ease-out ${isOpen ? 'translate-x-0' : 'translate-x-[calc(100%+1rem)]'}`}>
+      <div className="p-4 h-full flex flex-col">
         <div className="flex justify-between items-center mb-4 pb-2 border-b border-white/5">
           <h3 className="text-lg font-black text-[#F6CF80]">Global Chat</h3>
           <button onClick={onClose} className="text-white/50 hover:text-white transition p-1">
@@ -52,11 +66,11 @@ const Chat = ({ isOpen, onClose }) => {
         <div ref={chatContainerRef} className="flex-1 overflow-y-auto custom-scrollbar mb-4 pr-2 space-y-3">
           {messages.map((m, i) => (
             <div key={i} className="flex items-start gap-2">
-               <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-[10px] font-bold shrink-0">
-                  {(m.profiles?.username || 'Z')[0].toUpperCase()}
+               <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-[10px] font-bold shrink-0 text-[#F6CF80]">
+                  {(m.sender_id || 'U')[0]}
                </div>
                <div>
-                  <span className="text-[#F6CF80] font-bold text-xs block">{(m.profiles?.username || 'Anonim')}</span>
+                  <span className="text-[#F6CF80] font-bold text-xs block">{m.sender_id || 'Anonim'}</span>
                   <span className="text-white text-sm">{m.content}</span>
                </div>
             </div>
@@ -67,7 +81,7 @@ const Chat = ({ isOpen, onClose }) => {
             value={input} 
             onChange={e => setInput(e.target.value)} 
             onKeyPress={e => e.key === 'Enter' && sendMessage()} 
-            className="flex-1 bg-transparent p-2 outline-none text-sm"
+            className="flex-1 bg-transparent p-2 outline-none text-sm text-white placeholder-white/30"
             placeholder={user ? "Ketik pesan..." : "Login untuk chat"}
             disabled={!user}
           />
